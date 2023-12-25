@@ -1,5 +1,7 @@
 ﻿namespace ResXManager.View.Visuals
 {
+    using System;
+    using System.Collections.Generic;
     using System.ComponentModel;
     using System.Composition;
     using System.Linq;
@@ -22,11 +24,14 @@
         {
             ResourceManager = resourceManager;
             Configuration = configuration;
+            AllExcludeCultures = resourceManager.Cultures;
         }
 
         public ResourceManager ResourceManager { get; }
 
         public IConfiguration Configuration { get; }
+
+        public ICollection<CultureKey> AllExcludeCultures { get; private set; }
 
         public ICommand SortNodesByKeyCommand => new DelegateCommand(SortNodesByKey);
 
