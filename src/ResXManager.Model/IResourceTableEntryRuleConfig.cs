@@ -1,5 +1,7 @@
 ﻿namespace ResXManager.Model
 {
+    using ResXManager.Infrastructure;
+    using System.Collections.Generic;
     using System.ComponentModel;
 
     /// <summary>A rule that is validated against a entry of the resource table.</summary>
@@ -17,5 +19,10 @@
         /// The identification of the rule. This value is used to disable the rule check.
         /// </summary>
         string RuleId { get; }
+
+        /// <summary>
+        /// List of cultures to NOT evaluate the rule for.
+        /// </summary>
+        ICollection<CultureKey> ExcludedCultures { get; }
     }
 }

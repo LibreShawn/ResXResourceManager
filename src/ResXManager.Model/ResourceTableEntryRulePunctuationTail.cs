@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
     using ResXManager.Infrastructure;
@@ -15,6 +16,8 @@
         public const string Id = "PunctuationTail";
 
         public override string RuleId => Id;
+
+        public override ICollection<CultureKey> ExcludedCultures { get; } = new ObservableCollection<CultureKey>() { new CultureKey("th") };
 
         protected override IEnumerable<char> GetCharIterator(string value) => value.Reverse();
 

@@ -1,6 +1,7 @@
 ﻿namespace ResXManager.Model
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Linq;
 
     using ResXManager.Infrastructure;
@@ -14,6 +15,8 @@
         public const string Id = "WhiteSpaceTail";
 
         public override string RuleId => Id;
+
+        public override ICollection<CultureKey> ExcludedCultures { get; } = new ObservableCollection<CultureKey>();
 
         protected override IEnumerable<char> GetCharIterator(string? value) => value?.Reverse() ?? Enumerable.Empty<char>();
 

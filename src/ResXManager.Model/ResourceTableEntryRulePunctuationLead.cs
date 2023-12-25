@@ -1,7 +1,7 @@
 ﻿namespace ResXManager.Model
 {
     using System.Collections.Generic;
-
+    using System.Collections.ObjectModel;
     using ResXManager.Infrastructure;
     using ResXManager.Model.Properties;
     using TomsToolbox.Essentials;
@@ -13,6 +13,8 @@
         public const string Id = "PunctuationLead";
 
         public override string RuleId => Id;
+
+        public override ICollection<CultureKey> ExcludedCultures { get; } = new ObservableCollection<CultureKey>();
 
         protected override IEnumerable<char> GetCharIterator(string value) => value;
 
