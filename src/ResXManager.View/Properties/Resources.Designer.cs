@@ -299,6 +299,15 @@ namespace ResXManager.View.Properties {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to "Exclude languages:"
+        /// </summary>
+        public static string Configuration_ExcludeLanguages {
+            get {
+                return ResourceManager.GetString("Configuration_ExcludeLanguages", resourceCulture) ?? string.Empty;
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to "File creation"
         /// </summary>
         public static string Configuration_FileCreationHeader {
@@ -1252,6 +1261,10 @@ namespace ResXManager.View.Properties {
         ///   Looks up a localized string similar to Excel export mode.
         /// </summary>
         Configuration_ExcelExportModeHeader,
+        /// <summary>
+        ///   Looks up a localized string similar to Exclude languages:.
+        /// </summary>
+        Configuration_ExcludeLanguages,
         /// <summary>
         ///   Looks up a localized string similar to File creation.
         /// </summary>

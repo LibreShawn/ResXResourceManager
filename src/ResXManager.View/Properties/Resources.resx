@@ -492,4 +492,7 @@ Your ResXManager team.
   <data name="AppendPrefixValueFieldTypeLabel" xml:space="preserve">
     <value>Append the translation prefix to</value>
   </data>
+  <data name="Configuration_ExcludeLanguages" xml:space="preserve">
+    <value>Exclude languages:</value>
+  </data>
 </root>
