@@ -1,7 +1,9 @@
 ﻿<UserControl x:Class="ResXManager.View.Visuals.ConfigurationEditorView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" mc:Ignorable="d"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
              xmlns:model="clr-namespace:ResXManager.Model;assembly=ResXManager.Model"
              xmlns:converters="clr-namespace:ResXManager.View.Converters"
              xmlns:properties="clr-namespace:ResXManager.View.Properties"
@@ -12,7 +14,9 @@
              xmlns:visuals="clr-namespace:ResXManager.View.Visuals"
              xmlns:themes="clr-namespace:ResXManager.View.Themes"
              xmlns:infrastructure="clr-namespace:ResXManager.Infrastructure;assembly=ResXManager.Infrastructure"
+             xmlns:componentModel="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:styles="urn:TomsToolbox.Wpf.Styles"
+             xmlns:Interactions="http://schemas.microsoft.com/xaml/behaviors"
              xmlns:composition="urn:TomsToolbox.Composition"
              xmlns:interactions="http://schemas.microsoft.com/xaml/behaviors"
              d:DataContext="{d:DesignInstance visuals:ConfigurationEditorViewModel}">
@@ -211,10 +215,78 @@
                       ItemsSource="{Binding Configuration.Rules.ConfigurableRules.Values}">
           <ItemsControl.ItemTemplate>
             <DataTemplate DataType="{x:Type model:IResourceTableEntryRuleConfig}">
-              <CheckBox Margin="0,2" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
+              <StackPanel Margin="4" KeyboardNavigation.TabNavigation="Local">
+                <CheckBox Margin="0,2" IsChecked="{Binding IsEnabled, Mode=TwoWay}"
                         Content="{Binding Converter={x:Static toms:ObjectToDisplayNameConverter.Default}}"
                         ToolTip="{Binding Converter={x:Static toms:ObjectToDescriptionConverter.Default}}"
                         Style="{DynamicResource {x:Static styles:ResourceKeys.CheckBoxStyle}}" />
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal">
+                  <Decorator Width="22" />
+                  <TextBlock Text="{x:Static properties:Resources.Configuration_ExcludeLanguages}" VerticalAlignment="Center" />
+                  <Decorator Width="5" />
+                  <ToggleButton x:Name="ExcludedCulturesButton" Style="{DynamicResource {x:Static styles:ResourceKeys.ToggleButtonStyle}}">
+                    <ToggleButton.Resources>
+                      <CollectionViewSource x:Key="ExcludedCulturesSource" Source="{Binding ExcludedCultures}">
+                        <CollectionViewSource.SortDescriptions>
+                          <componentModel:SortDescription PropertyName="." />
+                        </CollectionViewSource.SortDescriptions>
+                      </CollectionViewSource>
+                    </ToggleButton.Resources>
+                    <ItemsControl ItemsSource="{Binding Source={StaticResource ExcludedCulturesSource}}" VerticalAlignment="Center">
+                      <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                          <StackPanel Orientation="Horizontal" />
+                        </ItemsPanelTemplate>
+                      </ItemsControl.ItemsPanel>
+                      <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="infrastructure:CultureKey">
+                          <Image Source="{Binding Culture, Converter={composition:Import converters:CultureToImageSourceConverter}}" Stretch="None" Margin="2,4" />
+                        </DataTemplate>
+                      </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                  </ToggleButton>
+                  <Popup IsOpen="{Binding Path=IsChecked, ElementName=ExcludedCulturesButton, Mode=OneWay}"
+                             StaysOpen="False"
+                             Placement="Bottom" PlacementTarget="{Binding ElementName=ExcludedCulturesButton}">
+                    <Interactions:Interaction.Behaviors>
+                      <toms:PopupFocusManagerBehavior ToggleButton="{Binding ElementName=ExcludedCulturesButton}" />
+                    </Interactions:Interaction.Behaviors>
+                    <Border Background="{DynamicResource {x:Static SystemColors.WindowBrushKey}}">
+                      <ListBox ItemsSource="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}, Path=DataContext.AllExcludeCultures}"
+                                   Style="{DynamicResource {x:Static styles:ResourceKeys.ListBoxStyle}}"
+                                   toms:MultiSelectorExtensions.SelectionBinding="{Binding ExcludedCultures}"
+                                   SelectionMode="Multiple" KeyboardNavigation.TabNavigation="Once">
+                        <ListBox.ItemTemplate>
+                          <DataTemplate DataType="infrastructure:CultureKey">
+                            <DockPanel Margin="2">
+                              <CheckBox DockPanel.Dock="Left"
+                                            IsChecked="{Binding IsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListBoxItem}}"
+                                            Style="{DynamicResource {x:Static styles:ResourceKeys.CheckBoxStyle}}" />
+                              <Decorator DockPanel.Dock="Left" Width="3" />
+                              <Image DockPanel.Dock="Left"
+                                         Source="{Binding Culture, Converter={composition:Import converters:CultureToImageSourceConverter}}" />
+                              <Decorator DockPanel.Dock="Left" Width="3" />
+                              <Decorator DockPanel.Dock="Right" Width="3" />
+                              <ContentPresenter Content="{Binding Culture, Converter={composition:Import converters:CultureToDisplayNameConverter}}" VerticalAlignment="Center" />
+                            </DockPanel>
+                          </DataTemplate>
+                        </ListBox.ItemTemplate>
+                        <ListBox.ItemContainerStyle>
+                          <Style TargetType="ListBoxItem">
+                            <Setter Property="Template">
+                              <Setter.Value>
+                                <ControlTemplate TargetType="ListBoxItem">
+                                  <ContentPresenter />
+                                </ControlTemplate>
+                              </Setter.Value>
+                            </Setter>
+                          </Style>
+                        </ListBox.ItemContainerStyle>
+                      </ListBox>
+                    </Border>
+                  </Popup>
+                </StackPanel>
+              </StackPanel>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -267,6 +339,8 @@
           <TextBox Text="{Binding Configuration.FileExclusionFilter, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
       </GroupBox>
+
+      <Decorator Height="5" />
 
       <ItemsControl>
         <ItemsControl.ItemTemplate>
