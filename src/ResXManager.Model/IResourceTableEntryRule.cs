@@ -1,8 +1,10 @@
 ﻿namespace ResXManager.Model
 {
+    using ResXManager.Infrastructure;
     using System.Collections.Generic;
     using System.ComponentModel;
     using System.Diagnostics.CodeAnalysis;
+    using System.Globalization;
 
     /// <summary>A rule that is validated against a entry of the resource table.</summary>
     /// <remarks>
@@ -20,7 +22,7 @@
         /// <returns>
         ///   <see langword="true" /> in case the values passed the check; otherwise <see langword="false" />
         /// </returns>
-        bool CompliesToRule(string? neutralValue, IEnumerable<string?> values, [Localizable(true)][NotNullWhen(false)] out string? message);
+        bool CompliesToRule(string? neutralValue, IEnumerable<KeyValuePair<CultureInfo?, string?>> values, [Localizable(true)][NotNullWhen(false)] out string? message);
     }
 
     public abstract class ResourceTableEntryRule : IResourceTableEntryRule
@@ -32,7 +34,9 @@
         /// </summary>
         public abstract string RuleId { get; }
 
-        public abstract bool CompliesToRule(string? neutralValue, IEnumerable<string?> values, [Localizable(true)][NotNullWhen(false)] out string? message);
+        public abstract ICollection<CultureKey> ExcludedCultures { get; }
+
+        public abstract bool CompliesToRule(string? neutralValue, IEnumerable<KeyValuePair<CultureInfo?, string?>> values, [Localizable(true)][NotNullWhen(false)] out string? message);
 
 #pragma warning disable CS0067
         public event PropertyChangedEventHandler? PropertyChanged;
