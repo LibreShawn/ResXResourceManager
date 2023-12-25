@@ -80,12 +80,12 @@
             return rules.AsReadOnly();
         }
 
-        internal bool CompliesToRules(ICollection<string> mutedRuleIds, string? reference, string? value, out IList<string> messages)
+        internal bool CompliesToRules(ICollection<string> mutedRuleIds, string? reference, CultureInfo? culture, string? value, out IList<string> messages)
         {
-            return CompliesToRules(mutedRuleIds, reference, new[] { value }, out messages);
+            return CompliesToRules(mutedRuleIds, reference, new Dictionary<CultureInfo?, string?>() { { culture, value } }, out messages);
         }
 
-        internal bool CompliesToRules(ICollection<string> mutedRuleIds, string? reference, ICollection<string?> values, out IList<string> messages)
+        internal bool CompliesToRules(ICollection<string> mutedRuleIds, string? reference, IEnumerable<KeyValuePair<CultureInfo?, string?>> values, out IList<string> messages)
         {
             var result = new List<string>();
 

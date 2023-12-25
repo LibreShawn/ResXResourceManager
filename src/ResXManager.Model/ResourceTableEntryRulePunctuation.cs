@@ -5,16 +5,15 @@
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
-
     using ResXManager.Infrastructure;
 
     public abstract class ResourceTableEntryRulePunctuation : ResourceTableEntryRule
     {
-        public override bool CompliesToRule(string? neutralValue, IEnumerable<string?> values, [NotNullWhen(false)] out string? message)
+        public override bool CompliesToRule(string? neutralValue, IEnumerable<KeyValuePair<CultureInfo?, string?>> values, [NotNullWhen(false)] out string? message)
         {
             var reference = GetPunctuationSequence(neutralValue).ToArray();
 
-            if (values.Select(GetPunctuationSequence).Any(value => !reference.SequenceEqual(value)))
+            if (values.Where(value => !ExcludedCultures.Contains(value.Key)).Select(value => GetPunctuationSequence(value.Value)).Any(value => !reference.SequenceEqual(value)))
             {
                 message = GetErrorMessage(new string(reference));
                 return false;

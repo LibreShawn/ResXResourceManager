@@ -379,8 +379,7 @@
                 .Where(lang => !lang.IsNeutral)
                 .Select(lang => Values.GetValue(lang))
                 .Where(value => !value.IsNullOrEmpty())
-                .ToList()
-                .AsReadOnly();
+                .ToDictionary(lang => lang.ToCulture(), value => value);
 
             return !Rules.CompliesToRules(MutedRuleIds, neutralValue, values, out _);
         }
@@ -480,7 +479,7 @@
                 if (neutralValue.IsNullOrEmpty())
                     return false;
 
-                if (Rules.CompliesToRules(MutedRuleIds, neutralValue, value, out var ruleMessages))
+                if (Rules.CompliesToRules(MutedRuleIds, neutralValue, culture.Culture, value, out var ruleMessages))
                     return false;
 
                 errorMessage = GetErrorPrefix(culture) + string.Join(" ", ruleMessages);
@@ -540,7 +539,7 @@
             if (neutralValue.IsNullOrEmpty())
                 yield break;
 
-            if (Rules.CompliesToRules(MutedRuleIds, neutralValue, value, out var ruleMessages))
+            if (Rules.CompliesToRules(MutedRuleIds, neutralValue, language.Culture, value, out var ruleMessages))
                 yield break;
 
             foreach (var message in ruleMessages)

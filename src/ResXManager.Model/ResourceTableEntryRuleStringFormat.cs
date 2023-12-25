@@ -1,12 +1,13 @@
 ﻿namespace ResXManager.Model
 {
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
     using System.Globalization;
     using System.Linq;
     using System.Text.RegularExpressions;
-
+    using ResXManager.Infrastructure;
     using ResXManager.Model.Properties;
     using TomsToolbox.Essentials;
 
@@ -18,7 +19,9 @@
 
         public override string RuleId => Id;
 
-        public override bool CompliesToRule(string? neutralValue, IEnumerable<string?> values, [NotNullWhen(false)] out string? message)
+        public override ICollection<CultureKey> ExcludedCultures { get; } = new ObservableCollection<CultureKey>();
+
+        public override bool CompliesToRule(string? neutralValue, IEnumerable<KeyValuePair<CultureInfo?, string?>> values, [NotNullWhen(false)] out string? message)
         {
             if (CompliesToRule(neutralValue, values))
             {
@@ -30,9 +33,9 @@
             return false;
         }
 
-        private static bool CompliesToRule(string? neutralValue, IEnumerable<string?> values)
+        private bool CompliesToRule(string? neutralValue, IEnumerable<KeyValuePair<CultureInfo?, string?>> values)
         {
-            var allValues = new[] { neutralValue }.Concat(values.Where(value => !value.IsNullOrEmpty())).ToList();
+            var allValues = new[] { neutralValue }.Concat(values.Where(value => !ExcludedCultures.Contains(value.Key) && !value.Value.IsNullOrEmpty()).Select(value => value.Value)).ToList();
 
             var indexedComply = allValues
                        .Select(GetStringFormatByIndexFlags)
